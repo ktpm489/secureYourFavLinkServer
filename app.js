@@ -62,7 +62,7 @@ apiRoutes.post('/auth', function(req, res) {
                 });
             } else {
                 var token = jwtHandler.sign(user, app.get('secretKey'), {
-                    expiresIn: 60
+                    expiresIn: 60 * 60
                 });
                 res.json({
                     success: true,
@@ -113,10 +113,21 @@ apiRoutes.post('/link/save', function(req, res) {
     });
 });
 apiRoutes.post('/link/get', function(req, res) {
+    console.log(req.userInfo);
     Link.find({
         username: req.userInfo.name
     }, function(err, links) {
-        res.json(links);
+        res.json({
+            links: links
+        });
+    });
+});
+apiRoutes.post('/link/remove', function(req, res) {
+    console.log(req.body.url);
+    Link.remove({
+        _id: req.body.url._id,
+    }, function(err) {
+        res.json({ success: true });
     });
 });
 app.use('/api', apiRoutes);
